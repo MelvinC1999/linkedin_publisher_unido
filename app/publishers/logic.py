@@ -36,13 +36,13 @@ class Publisher:
             user_info = get_user_info()
             return user_info.get("user_urn", settings.DEFAULT_USER_URN)
 
-    async def publicar(self, text: str, content_type: str, file: UploadFile = None):
+    async def publicar(self, text: str, content_type: str, file: UploadFile = None, image_url: str = None, video_url: str = None, document_url: str = None):
         if content_type == "texto":
             return await self._publicar_texto(text)
         elif content_type == "imagen":
-            return await self._publicar_imagen(text, file)
+            return await self._publicar_imagen(text, file, image_url)
         elif content_type == "video":
-            return await self._publicar_video(text, file)
+            return await self._publicar_video(text, file, video_url)
         elif content_type == "documento":
             return await self._publicar_documento(text, file)
         else:
@@ -84,13 +84,27 @@ class Publisher:
         else:
             return {"status": "error", "message": f"❌ Error al publicar UGC ({response.status_code})", "data": data}
 
-            
-    async def _publicar_imagen(self, text: str, file: UploadFile):
-        if not file:
-            return {"status": "error", "message": "Archivo de imagen requerido."}
 
-        file_bytes = await file.read()
-        mime_type = file.content_type
+    async def _descargar_desde_url(self, url: str):
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+            if response.status_code == 200:
+                return response.content, response.headers.get("content-type")
+            else:
+                raise Exception(f"Error al descargar archivo desde la URL: {response.status_code}")
+
+            
+    async def _publicar_imagen(self, text: str, file: UploadFile, image_url: str = None):
+        if file and hasattr(file, "read"):
+            file_bytes = await file.read()
+            mime_type = file.content_type
+        elif image_url:
+            file_bytes, mime_type = await self._descargar_desde_url(image_url)
+        else:
+            return {
+                "status": "error",
+                "message": "Debes proporcionar un archivo válido o una URL de imagen válida."
+            }
 
         if not mime_type.startswith("image/"):
             return {"status": "error", "message": f"Tipo de archivo no válido: {mime_type}"}
@@ -190,12 +204,14 @@ class Publisher:
             }
 
 
-    async def _publicar_video(self, text: str, file: UploadFile):
-        if not file:
-            return {"status": "error", "message": "Archivo de video requerido."}
-
-        file_bytes = await file.read()
-        mime_type = file.content_type
+    async def _publicar_video(self, text: str, file: UploadFile, video_url: str = None):
+        if file and hasattr(file, "read"):
+            file_bytes = await file.read()
+            mime_type = file.content_type
+        elif video_url:
+            file_bytes, mime_type = await self._descargar_desde_url(video_url)
+        else:
+            return {"status": "error", "message": "Debes proporcionar un archivo o una URL de video válida."}
 
         if not mime_type.startswith("video/"):
             return {"status": "error", "message": f"Tipo de archivo no válido: {mime_type}"}
@@ -318,15 +334,17 @@ class Publisher:
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         ]
 
-    async def _publicar_documento(self, text: str, file: UploadFile):
-        if not file:
-            return {"status": "error", "message": "Archivo de documento requerido."}
+    async def _publicar_documento(self, text: str, file: UploadFile, document_url: str = None):
+        if file and hasattr(file, "read"):
+            file_bytes = await file.read()
+            mime_type = file.content_type
+        elif document_url:
+            file_bytes, mime_type = await self._descargar_desde_url(document_url)
+        else:
+            return {"status": "error", "message": "Debes proporcionar un archivo de documento o una URL válida."}
         
         if self.owner_type != "organization":
             return {"status": "error", "message": "Solo las organizaciones pueden publicar documentos."}
-
-        file_bytes = await file.read()
-        mime_type = file.content_type
 
         if not self.is_valid_document_type(mime_type):
             return {"status": "error", "message": f"Tipo de documento no permitido: {mime_type}"}

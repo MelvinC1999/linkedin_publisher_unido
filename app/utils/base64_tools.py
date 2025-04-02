@@ -1,11 +1,12 @@
+"""
 import base64
 import re
 from typing import Tuple
 
 def decode_base64_file(data_base64: str) -> Tuple[str, bytes]:
     """
-    Decodifica un archivo en base64 con encabezado MIME.
-    Retorna una tupla (mime_type, file_bytes).
+    #Decodifica un archivo en base64 con encabezado MIME.
+    #Retorna una tupla (mime_type, file_bytes).
     """
     # Ejemplo esperado: data:image/jpeg;base64,/9j/4AAQSk...
     pattern = r"^data:(.+);base64,(.+)"
@@ -22,4 +23,5 @@ def decode_base64_file(data_base64: str) -> Tuple[str, bytes]:
     except Exception as e:
         raise ValueError("Error al decodificar base64: " + str(e))
 
-    return mime_type, file_bytes
+    return mime_type, file_bytes"
+    """
