@@ -66,34 +66,6 @@ Proyecto en FastAPI que permite publicar dinámicamente **texto, imágenes, vide
 
 ---
 
-🗂️ Estructura del proyecto
-
-```
-LINKEDIN_PUBLISHER_UNIDO/
-│
-├── app/
-│   ├── core/
-│   │   └── config.py               # Configuración de entorno y tokens
-│   │
-│   ├── publishers/
-│   │   ├── routers/
-│   │   │   ├── publisher.py        # Endpoint principal para publicar
-│   │   │   ├── user.py             # Obtención dinámica del user_urn
-│   │   ├── logic.py                # Lógica para texto, imagen, video, documento
-│   │   ├── schemas.py              # Enums y validaciones
-│   │
-│   ├── utils/
-│   │   └── base64_tools.py         # Funciones auxiliares (si se usan)
-│
-├── tests/                          # Carpeta para tests
-├── .env                            # Variables de entorno
-├── .gitignore                      # Exclusiones de Git
-├── main.py                         # Punto de entrada FastAPI
-├── requirements.txt                # Dependencias del proyecto
-└── README.md                       # Este archivo ✨
-```
-
-
 ⚙️ Instalación y uso
 
 ```bash
