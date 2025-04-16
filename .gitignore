@@ -38,3 +38,12 @@ build/
 
 # Archivos de notebooks
 .ipynb_checkpoints/
+
+# Archivos sensibles adicionales
+token.txt
+
+# Errores comunes o duplicados
+requirementes.txt
+
+# Configuración de VSCode por extensión
+*.code-workspace
