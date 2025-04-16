@@ -16,8 +16,6 @@ Proyecto en **FastAPI** que permite publicar dinámicamente **texto, imágenes, 
 
 ---
 
-## ⚙️ Instalación y uso
-
 ```bash
 # 1. Clona el repositorio
 git clone https://github.com/tu_usuario/linkedin_publisher_unido.git
