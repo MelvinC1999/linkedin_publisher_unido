@@ -44,7 +44,7 @@ class Publisher:
         elif content_type == "video":
             return await self._publicar_video(text, file, video_url)
         elif content_type == "documento":
-            return await self._publicar_documento(text, file)
+            return await self._publicar_documento(text, file, document_url)
         else:
             raise NotImplementedError(f"Tipo de contenido '{content_type}' no implementado aún.")
 
